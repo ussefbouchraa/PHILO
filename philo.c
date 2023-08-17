@@ -6,7 +6,7 @@
 /*   By: ybouchra <ybouchra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/14 23:36:51 by ybouchra          #+#    #+#             */
-/*   Updated: 2023/08/15 04:39:20 by ybouchra         ###   ########.fr       */
+/*   Updated: 2023/08/17 15:27:08 by ybouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,10 +57,34 @@ void print_info(char **av)
 		printf("nbr_time_meal : %d\n",vars.number_of_times_each_philosopher_must_eat);
 }
 
-void usage(void)
-{
-	write(1,"ERROR\n", 6);
+void *thread_func(void* i){
+	int arg = (*(int *)i);
+	printf("Thread is done now the task %d\n", ++arg);
+	return(NULL);
 }
+
+void create_threads()
+{
+	t_vars vars;
+	int i = -1;
+	int nbr_threads = vars.number_of_philosophers;
+	
+    pthread_t threads[nbr_threads];
+
+    while (nbr_threads > ++i) {
+        if (pthread_create(&threads[i], NULL, thread_func, &i) != 0) {
+            write(2, "error_pthread_create", 20);
+            return;
+        }
+		if (pthread_join(threads[i], NULL) != 0) {
+            write(2, "error_pthread_join ", 18);
+			return;
+			}
+    }
+	
+}
+
+
 int main(int ac, char **av)
 {
 	if(ac >= 5 && ac <= 6)
@@ -71,12 +95,13 @@ int main(int ac, char **av)
 		while(av[++i])
 		{
 			if(!is_digits(av[i]) || !valid_args(av[i]) )
-				return(write(1,"ERROR\n", 6), 0);
+				return(write(2,"ERROR\n", 6), 0);
 		}
 		add_value(av);
-		print_info(av);
+		create_threads();
+
 	}
 	else
-		return(write(1,"ERROR\n", 6), 1);
+		return(write(2,"ERROR\n", 6), 1);
 	
 }
