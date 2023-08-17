@@ -1,6 +1,6 @@
 NAME = philo
 
-CC = cc -Wall -Wextra -Werror
+CC = cc -Wall -Wextra -Werror -pthread
 RM = rm -rf
 
 FILES = philo.c utils.c 
