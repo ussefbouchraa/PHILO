@@ -6,12 +6,16 @@
 #include <string.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <sys/time.h>
 
 #define INT_MAX  2147483647
 #define INT_MIN  -2147483648
 
 typedef struct s_vars
 {
+	int *id;
+	int num;
+	pthread_mutex_t mutex;
 	int number_of_philosophers;
 	int number_of_forks;
 	int time_to_die;
