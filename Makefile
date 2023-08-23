@@ -11,7 +11,7 @@ OBJS = $(FILES:.c=.o)
 all	: $(NAME)
 
 $(NAME) : $(OBJS)
-	$(CC) $^ -o $@
+	$(CC)  $^ -o $@
 
 %.o : %.c philo.h
 	$(CC) -c $< -o $@ 

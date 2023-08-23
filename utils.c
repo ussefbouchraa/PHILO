@@ -6,7 +6,7 @@
 /*   By: ybouchra <ybouchra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/14 23:37:03 by ybouchra          #+#    #+#             */
-/*   Updated: 2023/08/15 04:33:52 by ybouchra         ###   ########.fr       */
+/*   Updated: 2023/08/21 01:17:48 by ybouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,24 @@ size_t ft_strlen(char *s)
 		i++;
 
 return(i);
+}
+
+int valid_args(char *s)
+{
+	int i;
+	
+	i = 0;
+	if (s[i] == '-' || s[i] == '+')
+		i++;
+	while(s[i] == '0')
+		i++;
+	if(ft_strlen(s + i) > 10)
+		return(0);
+		
+	 if(ft_atoi(s) > INT_MAX  || ft_atoi(s) < 0)
+	 	return(0);
+
+	return(1);
 }
 
 int is_digits(char *s)
