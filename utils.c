@@ -6,7 +6,7 @@
 /*   By: ybouchra <ybouchra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/14 23:37:03 by ybouchra          #+#    #+#             */
-/*   Updated: 2023/08/21 01:17:48 by ybouchra         ###   ########.fr       */
+/*   Updated: 2023/08/23 23:09:12 by ybouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,3 +83,25 @@ long ft_atoi(char *s)
 	return(res * sign);
 	
 }
+
+size_t	time_now()
+{
+	size_t	ms;
+
+	struct timeval current_time;
+	gettimeofday(&current_time, NULL);
+	ms = current_time.tv_sec * 1e3 + current_time.tv_usec / 1e3;
+	
+	return (ms);	
+}
+
+void	ft_usleep(size_t t_ms)
+{
+	size_t	start;
+
+	start = time_now();
+	while ((time_now() - start) < t_ms){
+		usleep(100);
+	}
+}
+

@@ -6,13 +6,12 @@
 /*   By: ybouchra <ybouchra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/16 02:33:31 by ybouchra          #+#    #+#             */
-/*   Updated: 2023/08/22 01:16:32 by ybouchra         ###   ########.fr       */
+/*   Updated: 2023/08/23 17:09:34 by ybouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+
+#include "philo.h"
 
 
 // --->pthread

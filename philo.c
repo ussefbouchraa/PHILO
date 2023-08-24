@@ -6,7 +6,7 @@
 /*   By: ybouchra <ybouchra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/14 23:36:51 by ybouchra          #+#    #+#             */
-/*   Updated: 2023/08/23 12:47:26 by ybouchra         ###   ########.fr       */
+/*   Updated: 2023/08/24 17:49:11 by ybouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,46 +14,62 @@
 
 void *routine(void *arg){
 
-	t_philo *philosopher = (t_philo *)arg;
+	t_philo *philosopher;
+	int meal;
+	
+	meal = 0;
+	philosopher = (t_philo *)arg;
+	philosopher->start_time = time_now();
+	
 	if (philosopher->id % 2 == 0){
-		usleep(100);
+		ft_usleep(100);
 	}
-	while (1){
+	while (1)
+	{
+		if (philosopher->vars->number_of_meals == meal)
+			return(NULL);
+		
 		pthread_mutex_lock(&philosopher->fork);
-		printf("philo[%d] has taken a fork1\n", philosopher->id);
+		printf("[%zu]ms philo[%d] has taken a fork\n", time_now() - philosopher->start_time, philosopher->id);
 		pthread_mutex_lock(philosopher->next_fork);
-		printf("philo[%d] has taken a fork2\n", philosopher->id);
-		printf("philo[%d] is eating\n", philosopher->id);
+		
+		printf("[%zu]ms philo[%d] is eating\n", time_now() - philosopher->start_time, philosopher->id);
 		usleep(philosopher->vars->time_to_eat * 1000);
-		//todo : sleep time to eat
-		// update lastmealtime 
-		// update numberofmeals
+		philosopher->last_meal = time_now();
+		meal++;
+		
 		pthread_mutex_unlock(&philosopher->fork);
 		pthread_mutex_unlock(philosopher->next_fork);
-		printf("philo[%d] is sleeping\n", philosopher->id);
-		usleep(philosopher->vars->time_to_sleep  * 1000);
 		
-		// todo : sleep time to sleep 
-		printf("philo[%d] is thinking\n", philosopher->id);
-
+		printf("[%zu]ms philo[%d] is sleeping\n", time_now() - philosopher->start_time, philosopher->id);
+		usleep(philosopher->vars->time_to_sleep  * 1000);
+		printf("[%zu]ms philo[%d] is thinking\n",time_now() - philosopher->start_time, philosopher->id);
+		
+		if( (time_now() - philosopher->last_meal) > philosopher->vars->time_to_die)
+				printf("[%zu]ms philo[%d] is die\n", time_now() - philosopher->start_time, philosopher->id);
+		
 	}
 
 	return(NULL);
 }
 
-
-void	init_vars(t_vars *vars, char **av)
+int create_threads(t_philo *philosopher, t_vars *vars)
 {
-	vars->num_of_philo = ft_atoi(av[1]);	
-	vars->time_to_die = ft_atoi(av[2]);	
-	vars->time_to_die = ft_atoi(av[3]);	
-	vars->time_to_sleep = ft_atoi(av[4]);
-	if (av[5])
-		vars->number_of_meals = ft_atoi(av[5]);
-	else
-		vars->number_of_meals = -1;
-		
+	int i = -1;
+	while(vars->num_of_philo > ++i)
+	{
+		if(pthread_create(&philosopher[i].tid, NULL, routine, &philosopher[i]))
+			return(printf("failed_creation_pthread"), 0);
+	}
+	i = -1;
+	while(vars->num_of_philo > ++i)
+	{
+		if(pthread_join(philosopher[i].tid, NULL))
+			return(printf("failed_join_pthread"), 0);
+	}	
+	return(1);
 }
+
 t_philo *init_philo( t_vars *vars)
 {
 	t_philo *philosopher;
@@ -79,23 +95,19 @@ t_philo *init_philo( t_vars *vars)
 	
 }
 
-int create_threads(t_philo *philosopher, t_vars *vars)
+void	init_vars(t_vars *vars, char **av)
 {
-	int i = -1;
-	while(vars->num_of_philo > ++i)
-	{
-		if(pthread_create(&philosopher[i].tid, NULL, routine, &philosopher[i]))
-			return(printf("failed_creation_pthread"), 0);
-	}
-	i = -1;
-	while(vars->num_of_philo > ++i)
-	{
-		if(pthread_join(philosopher[i].tid, NULL))
-			return(printf("failed_join_pthread"), 0);
-	}
-			
-	return(1);
+	vars->num_of_philo = ft_atoi(av[1]);	
+	vars->time_to_die = ft_atoi(av[2]);	
+	vars->time_to_die = ft_atoi(av[3]);	
+	vars->time_to_sleep = ft_atoi(av[4]);
+	if (av[5])
+		vars->number_of_meals = ft_atoi(av[5]);
+	else
+		vars->number_of_meals = -1;
+		
 }
+
 
 
 int main(int ac, char **av)
