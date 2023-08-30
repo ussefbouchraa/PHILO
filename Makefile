@@ -1,9 +1,8 @@
 NAME = philo
 
-CC = cc -Wall -Wextra -Werror -pthread
-RM = rm -rf
+CC = cc -Wall -Wextra -Werror 
 
-FILES = philo.c utils.c 
+FILES = philo.c utils_pars.c utils_philo.c
 
 OBJS = $(FILES:.c=.o)
 

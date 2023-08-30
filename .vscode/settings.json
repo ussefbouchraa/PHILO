@@ -1,9 +1,0 @@
-{
-	"files.associations": {
-		"stdio.h": "c",
-		"stdlib.h": "c",
-		"__mutex_base": "c",
-		"iterator": "c"
-	},
-	"C_Cpp.errorSquiggles": "disabled"
-}
