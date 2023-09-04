@@ -6,7 +6,7 @@
 /*   By: ybouchra <ybouchra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 04:56:09 by ybouchra          #+#    #+#             */
-/*   Updated: 2023/08/30 02:45:12 by ybouchra         ###   ########.fr       */
+/*   Updated: 2023/09/03 00:54:02 by ybouchra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,18 +21,10 @@ void	ft_usleep(size_t t_ms)
 		usleep(100);
 }
 
-size_t	time_now(void)
-{
-	struct timeval	current_time;
-
-	gettimeofday(&current_time, NULL);
-	return ((current_time.tv_sec * 1000) + (current_time.tv_usec / 1000));
-}
-
 void	print(char *msg, t_philo *philosopher)
 {
 	pthread_mutex_lock(&philosopher->vars->print);
-	printf("%zu\t%d\t%s\n", time_now() - philosopher->start_time,
+	printf("%zu\t%d %s\n", time_now() - philosopher->start_time,
 		philosopher->id, msg);
 	pthread_mutex_unlock(&philosopher->vars->print);
 }
@@ -60,6 +52,25 @@ void	init_vars(t_vars *vars, char **av)
 		vars->number_of_meals = ft_atoi(av[5]);
 	else
 		vars->number_of_meals = -1;
-	pthread_mutex_init(&vars->print, NULL);
-	pthread_mutex_init(&vars->lock_m, NULL);
+	if (pthread_mutex_init(&vars->print, NULL))
+		return ;
+	if (pthread_mutex_init(&vars->lock_m, NULL))
+		return ;
+}
+
+void	is_eating(t_philo *ph)
+{
+	if (pthread_mutex_lock(&ph->lock_lm))
+		return ;
+	ph->last_meal = time_now();
+	if (pthread_mutex_unlock(&ph->lock_lm))
+		return ;
+	print("is eating", ph);
+	ft_usleep(ph->vars->time_to_eat);
+	if (pthread_mutex_lock(&ph->vars->lock_m))
+		return ;
+	ph->meals += (ph->vars->number_of_meals != -1);
+	ph->vars->finish_eats += ph->meals == ph->vars->number_of_meals;
+	if (pthread_mutex_unlock(&ph->vars->lock_m))
+		return ;
 }
